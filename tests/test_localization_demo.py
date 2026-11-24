@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from scripts.localization_demo import (binary_to_segments, frame_iou, scores_to_segments,
+from scripts.localization_demo import (best_f1_threshold, binary_to_segments, normalize_video, frame_iou, scores_to_segments,
                                        segments_to_mask, smooth, video_name_from_path)
 
 
@@ -30,6 +30,20 @@ class LocalizationDemoTests(unittest.TestCase):
     def test_video_name(self):
         self.assertEqual(video_name_from_path('/a/b/Arson011_x264__0.npy'), 'Arson011_x264')
         self.assertEqual(video_name_from_path('Fight_01.npy'), 'Fight_01')
+
+    def test_best_f1_threshold_separates_low_scores(self):
+        # 이상 구간 점수가 0.3 근처라 0.5로는 못 잡는 경우에도 적절한 기준을 찾아야 함
+        scores = np.r_[np.full(80, 0.05), np.full(20, 0.3)]
+        gt = np.r_[np.zeros(80, bool), np.ones(20, bool)]
+        t, f1 = best_f1_threshold(scores, gt)
+        self.assertTrue(0.05 < t <= 0.3)
+        self.assertAlmostEqual(f1, 1.0)
+
+    def test_normalize_video(self):
+        n = normalize_video([0.01, 0.03, 0.02])
+        self.assertAlmostEqual(n.min(), 0.0)
+        self.assertAlmostEqual(n.max(), 1.0)
+        self.assertTrue(np.all(normalize_video([0.2, 0.2]) == 0))
 
 
 if __name__ == '__main__':

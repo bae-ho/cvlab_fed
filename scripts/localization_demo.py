@@ -50,6 +50,13 @@ def smooth(scores, window):
     return np.convolve(padded, kernel, mode='valid')
 
 
+def normalize_video(scores):
+    """영상 하나의 점수를 min-max로 0~1에 맞춤 (상대 점수)."""
+    scores = np.asarray(scores, dtype=np.float64)
+    lo, hi = scores.min(), scores.max()
+    return np.zeros_like(scores) if hi - lo < 1e-8 else (scores - lo) / (hi - lo)
+
+
 def binary_to_segments(mask):
     """0/1 배열 -> [(start, end_exclusive), ...]"""
     mask = np.asarray(mask).astype(np.int8)
@@ -90,6 +97,23 @@ def frame_iou(pred_mask, gt_mask):
     return float(np.logical_and(pred_mask, gt_mask).sum() / union)
 
 
+def best_f1_threshold(scores, gt, num=200):
+    """프레임 F1이 최대가 되는 threshold. 반환: (threshold, f1)"""
+    scores = np.asarray(scores, dtype=np.float64)
+    gt = np.asarray(gt, dtype=bool)
+    best_t, best_f1 = 0.5, -1.0
+    for t in np.unique(np.quantile(scores, np.linspace(0.5, 0.999, num))):
+        pred = scores >= t
+        tp = np.logical_and(pred, gt).sum()
+        if tp == 0:
+            continue
+        precision, recall = tp / pred.sum(), tp / gt.sum()
+        f1 = 2 * precision * recall / (precision + recall)
+        if f1 > best_f1:
+            best_t, best_f1 = float(t), float(f1)
+    return best_t, best_f1
+
+
 def video_name_from_path(path):
     """'.../Arson011_x264__0.npy' -> 'Arson011_x264'"""
     stem = os.path.splitext(os.path.basename(str(path)))[0]
@@ -99,7 +123,8 @@ def video_name_from_path(path):
 # ----------------------------------------------------------------------------
 # 시각화
 # ----------------------------------------------------------------------------
-def plot_video(out_path, name, frame_scores, gt_frames, pred_segments_f, threshold, title_extra):
+def plot_video(out_path, name, frame_scores, gt_frames, pred_segments_f, threshold, title_extra,
+               ylabel='score'):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -109,7 +134,7 @@ def plot_video(out_path, name, frame_scores, gt_frames, pred_segments_f, thresho
     fig, ax = plt.subplots(figsize=(11, 3.2))
     for s, e in binary_to_segments(gt_frames):
         ax.axvspan(s, e, color='#e74c3c', alpha=0.22, lw=0)
-    ax.plot(x, frame_scores, color='#1f4e9c', lw=1.6, label='anomaly score')
+    ax.plot(x, frame_scores, color='#1f4e9c', lw=1.6, label=ylabel)
     ax.axhline(threshold, color='gray', ls='--', lw=1, label=f'threshold {threshold:.2f}')
     for s, e in pred_segments_f:
         ax.hlines(-0.06, s, e, colors='#27ae60', lw=6)
@@ -119,7 +144,7 @@ def plot_video(out_path, name, frame_scores, gt_frames, pred_segments_f, thresho
     ax.set_xlim(0, max(n - 1, 1))
     ax.set_ylim(-0.12, 1.05)
     ax.set_xlabel('frame')
-    ax.set_ylabel('score')
+    ax.set_ylabel(ylabel)
     ax.set_title(f'{name}   {title_extra}', fontsize=10, loc='left', pad=18)
     ax.legend(loc='lower right', bbox_to_anchor=(1.0, 1.0), fontsize=8, ncol=4, frameon=False)
     for side in ('top', 'right'):
@@ -138,9 +163,14 @@ def find_video_file(video_dir, name):
     return None
 
 
-def render_overlay(video_path, out_path, frame_scores, gt_frames, frame_classes, threshold):
-    """원본 영상 하단에 점수 그래프 strip, 상단에 판정 배너를 그린다."""
+def render_overlay(video_path, out_path, frame_scores, gt_frames, frame_classes, threshold,
+                   heatmapper=None, heat_stride=4, peak_png=None):
+    """원본 영상 하단에 점수 그래프 strip, 상단에 판정 배너를 그린다.
+    heatmapper가 있으면 이상 판정 프레임에 CLIP 패치 히트맵을 겹치고,
+    peak_png 경로에 점수가 가장 높은 프레임의 [원본 | 히트맵] 이미지를 저장한다."""
     import cv2
+    if heatmapper is not None:
+        from scripts.clip_patch_heatmap import blend_heatmap
 
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -166,6 +196,8 @@ def render_overlay(video_path, out_path, frame_scores, gt_frames, frame_classes,
     font = max(0.35, min(0.8, w / 640))  # UCF-Crime(320x240) 같은 작은 영상에서도 글자가 잘리지 않게
     thick = 1 if font < 0.6 else 2
     bar_h = int(30 * font / 0.7) + 4
+    peak_k = int(np.argmax(frame_scores))
+    heat, heat_age = None, heat_stride
     i = 0
     while True:
         ok, frame = cap.read()
@@ -174,6 +206,16 @@ def render_overlay(video_path, out_path, frame_scores, gt_frames, frame_classes,
         k = min(i, n - 1)
         score = float(frame_scores[k])
         anomalous = score >= threshold
+        if heatmapper is not None and (anomalous or i == peak_k):
+            if heat is None or heat_age >= heat_stride:
+                heat, heat_age = heatmapper([frame], [frame_classes[k]])[0], 0
+            heat_age += 1
+            if i == peak_k and peak_png:
+                cv2.imwrite(peak_png, np.hstack([frame, blend_heatmap(frame, heat)]))
+            if anomalous:
+                frame = blend_heatmap(frame, heat)
+        else:
+            heat = None
         color = (40, 40, 220) if anomalous else (60, 160, 60)
         text = f'ANOMALY: {frame_classes[k]}  {score:.2f}' if anomalous else f'normal  {score:.2f}'
         cv2.rectangle(frame, (0, 0), (w, bar_h), color, -1)
@@ -235,15 +277,25 @@ def load_model(args, device):
                   personalized_rank=args.personalized_rank,
                   personalized_alpha=args.personalized_alpha,
                   pel_projection=args.pel_projection).to(device)
-    model.load_state_dict(torch.load(args.checkpoint, map_location=device))
+    state = torch.load(args.checkpoint, map_location=device)
+    if set(state.keys()) <= {'personalized_prompt.A', 'personalized_prompt.B', 'personalized_prompt.delta'}:
+        raise SystemExit(f'{args.checkpoint} 는 클라이언트 개인화 파라미터만 들어 있는 파일입니다.\n'
+                         '--checkpoint 에는 같은 폴더의 model.pth(전역 모델)를 주고, 개인화 결과를 보려면\n'
+                         '--inference_mode personalized --personalized_checkpoint_dir <폴더> '
+                         '--personalized_client_id <번호> 를 추가하세요.')
+    model.load_state_dict(state)
 
     use_personalization = args.inference_mode == 'personalized'
     if use_personalization:
         if args.personalization_type == 'none' or args.personalized_checkpoint_dir is None:
             raise ValueError('--inference_mode personalized 에는 --personalization_type 과 '
                              '--personalized_checkpoint_dir 가 필요합니다 (inference.py와 동일)')
-        path = os.path.join(args.personalized_checkpoint_dir,
-                            f'client_{args.personalized_client_id}_personalized.pth')
+        cid = args.personalized_client_id
+        candidates = [os.path.join(args.personalized_checkpoint_dir, f'client_{cid}_{suffix}.pth')
+                      for suffix in ('personalized', 'local')]  # 학습 경로에 따라 저장 이름이 다름
+        path = next((c for c in candidates if os.path.exists(c)), None)
+        if path is None:
+            raise SystemExit(f'개인화 파일을 찾을 수 없습니다: {candidates}')
         model.load_personalized_state_dict(torch.load(path, map_location=device))
     model.eval()
     return model, use_personalization
@@ -254,7 +306,11 @@ def build_parser():
     p = config.parser
     g = p.add_argument_group('localization demo')
     g.add_argument('--out_dir', default='artifacts/localization_demo')
-    g.add_argument('--threshold', type=float, default=0.5, help='이상 판정 점수 기준')
+    g.add_argument('--threshold', default='0.5',
+                   help="이상 판정 점수 기준. 숫자 또는 'auto'(테스트셋 프레임 F1이 최대인 값, 시각화용)")
+    g.add_argument('--norm', choices=['none', 'video'], default='none',
+                   help="video: 영상마다 점수를 0~1로 늘려서 '그 영상 안에서 가장 이상한 구간'을 표시 "
+                        "(영상 간 점수 크기 차이를 없앰. 이상이 있다고 가정하므로 정상 영상에는 부적합)")
     g.add_argument('--smooth', type=int, default=1, help='스니펫 단위 이동평균 창 크기 (1=끔)')
     g.add_argument('--min_seg', type=int, default=2, help='이보다 짧은 예측 구간(스니펫)은 제거')
     g.add_argument('--merge_gap', type=int, default=1, help='이 이하의 틈(스니펫)은 하나의 구간으로 병합')
@@ -262,6 +318,9 @@ def build_parser():
     g.add_argument('--only_anomaly', action='store_true', help='정답이 Normal인 영상은 건너뜀')
     g.add_argument('--max_videos', type=int, default=None)
     g.add_argument('--video_dir', default=None, help='원본 영상 폴더. 주면 오버레이 mp4 생성')
+    g.add_argument('--heatmap', action='store_true',
+                   help='오버레이 영상의 이상 프레임에 CLIP 패치 히트맵(보조 시각화)을 겹침. --video_dir 필요')
+    g.add_argument('--heatmap_stride', type=int, default=4, help='히트맵을 몇 프레임마다 새로 계산할지')
     g.add_argument('--fps', type=float, default=30.0, help='segments.csv의 초 단위 환산용 fps')
     return p
 
@@ -300,87 +359,131 @@ def main():
     os.makedirs(plot_dir, exist_ok=True)
     if args.video_dir:
         os.makedirs(vid_dir, exist_ok=True)
+    heatmapper = None
+    if args.heatmap:
+        if not args.video_dir:
+            raise SystemExit('--heatmap 은 원본 영상이 필요합니다: --video_dir 를 함께 지정하세요')
+        from scripts.clip_patch_heatmap import ClipPatchHeatmap
+        heatmapper = ClipPatchHeatmap(model.clipmodel, prompt_text, device)
+        os.makedirs(os.path.join(args.out_dir, 'heatmaps'), exist_ok=True)
 
-    all_scores, seg_rows, video_rows = [], [], []
-    offset, shown = 0, 0
+    # 1) 전체 테스트셋 추론 (점수만 모아둠)
+    records, offset = [], 0
     with torch.no_grad():
         for i, (visual, label, length) in enumerate(test_loader):
             score, probs = predict_video(model, visual, length, prompt_text, device, use_personalization,
                                          args.visual_length)
-            n_snip = len(score)
-            n_frames = n_snip * FRAMES_PER_SNIPPET
+            n_frames = len(score) * FRAMES_PER_SNIPPET
             gt_frames = gt_all[offset: offset + n_frames].astype(bool)
             offset += n_frames
-            all_scores.append(score)  # 전체 AUC/AP는 smoothing 전 원점수로 계산 (inference.py와 동일)
-
             label = label[0] if isinstance(label, (list, tuple)) else str(label)
-            name = video_name_from_path(df.loc[i, 'path'])
-            if args.videos and not any(v in name for v in args.videos):
-                continue
-            if args.only_anomaly and label in ('Normal', 'A'):
-                continue
-            if args.max_videos is not None and shown >= args.max_videos:
-                continue
-            shown += 1
-
-            s = smooth(score, args.smooth)
-            segs = scores_to_segments(s, args.threshold, args.min_seg, args.merge_gap)
-            frame_scores = np.repeat(s, FRAMES_PER_SNIPPET)
-            segs_f = [(a * FRAMES_PER_SNIPPET, b * FRAMES_PER_SNIPPET) for a, b in segs]
-            pred_mask = segments_to_mask(segs_f, n_frames)
-            iou = frame_iou(pred_mask, gt_frames)
-
-            # 이상 클래스: 클래스 0(normal)을 제외한 확률 중 최댓값
-            snip_cls = probs[:, 1:].argmax(axis=1) + 1
-            frame_classes = np.repeat([prompt_text[c] for c in snip_cls], FRAMES_PER_SNIPPET)
-            if segs:
-                in_seg = segments_to_mask(segs, n_snip)
-                video_cls = prompt_text[int(probs[in_seg, 1:].mean(0).argmax()) + 1]
-            else:
-                video_cls = prompt_text[0]
-
-            for a, b in segs:
-                seg_rows.append({
-                    'video': name, 'gt_label': label, 'pred_class': prompt_text[int(probs[a:b, 1:].mean(0).argmax()) + 1],
-                    'start_frame': a * FRAMES_PER_SNIPPET, 'end_frame': b * FRAMES_PER_SNIPPET,
-                    'start_sec': round(a * FRAMES_PER_SNIPPET / args.fps, 2),
-                    'end_sec': round(b * FRAMES_PER_SNIPPET / args.fps, 2),
-                    'max_score': round(float(s[a:b].max()), 4)})
-
-            vid_auc = None
-            if 0 < gt_frames.sum() < len(gt_frames):
-                vid_auc = float(roc_auc_score(gt_frames, np.repeat(score, FRAMES_PER_SNIPPET)))
-            video_rows.append({'video': name, 'gt_label': label, 'pred_class': video_cls,
-                               'num_segments': len(segs), 'frame_iou': None if iou is None else round(iou, 4),
-                               'video_auc': None if vid_auc is None else round(vid_auc, 4),
-                               'max_score': round(float(s.max()), 4)})
-
-            extra = f'GT: {label}   pred: {video_cls}' + ('' if iou is None else f'   IoU {iou:.2f}')
-            plot_video(os.path.join(plot_dir, f'{name}.png'), name, frame_scores, gt_frames,
-                       segs_f, args.threshold, extra)
-
-            if args.video_dir:
-                vpath = find_video_file(args.video_dir, name)
-                if vpath is None:
-                    print(f'  [skip] 원본 영상 없음: {name}')
-                else:
-                    render_overlay(vpath, os.path.join(vid_dir, f'{name}_demo.mp4'),
-                                   frame_scores, gt_frames, frame_classes, args.threshold)
-            print(f'[{shown}] {name}: GT={label} pred={video_cls} segments={len(segs)}'
-                  + ('' if iou is None else f' IoU={iou:.3f}'))
+            records.append({'name': video_name_from_path(df.loc[i, 'path']), 'label': label,
+                            'score': score, 'probs': probs, 'gt': gt_frames})
+            if (i + 1) % 50 == 0:
+                print(f'  추론 {i + 1}/{len(test_loader)}')
 
     if offset != len(gt_all):
         print(f'[경고] GT 길이({len(gt_all)})와 예측 프레임 수({offset})가 다릅니다. '
               'test csv와 gt 파일이 같은 순서/버전인지 확인하세요.')
 
-    scores_f = np.repeat(np.concatenate(all_scores), FRAMES_PER_SNIPPET)
+    # 전체 AUC/AP는 smoothing 전 원점수로 계산 (inference.py와 동일)
+    scores_f = np.repeat(np.concatenate([r['score'] for r in records]), FRAMES_PER_SNIPPET)
     m = min(len(scores_f), len(gt_all))
+    def display_score(raw):
+        out = smooth(raw, args.smooth)
+        return normalize_video(out) if args.norm == 'video' else out
+
+    vis_records = [r for r in records if not (args.norm == 'video' and r['label'] in ('Normal', 'A'))]
+    smoothed_f = np.repeat(np.concatenate([display_score(r['score']) for r in vis_records]), FRAMES_PER_SNIPPET)
+    gt_vis = np.concatenate([r['gt'] for r in vis_records])
+    k = min(len(smoothed_f), len(gt_vis))
+    smoothed_f, gt_vis = smoothed_f[:k], gt_vis[:k]
+    gt_m = gt_all[:m].astype(bool)
+    print(('[상대 점수: 영상별 0~1 정규화, 이상 영상만] ' if args.norm == 'video' else '') + '점수 분포  정상 프레임 median {:.3f} / p95 {:.3f}   이상 프레임 median {:.3f} / p95 {:.3f}'.format(
+        np.median(smoothed_f[~gt_vis]), np.percentile(smoothed_f[~gt_vis], 95),
+        np.median(smoothed_f[gt_vis]), np.percentile(smoothed_f[gt_vis], 95)))
+
+    # 2) threshold 결정
+    if str(args.threshold).lower() == 'auto':
+        threshold, best_f1 = best_f1_threshold(smoothed_f, gt_vis)
+        print(f'threshold=auto -> {threshold:.4f} (테스트셋 프레임 F1 {best_f1:.3f} 최대 지점; '
+              '테스트 정답으로 고른 값이므로 시각화 용도로만 사용)')
+    else:
+        threshold = float(args.threshold)
+
+    # 3) 선택한 영상 시각화
+    seg_rows, video_rows, shown = [], [], 0
+    for r in records:
+        name, label, score, probs, gt_frames = r['name'], r['label'], r['score'], r['probs'], r['gt']
+        if args.videos and not any(v in name for v in args.videos):
+            continue
+        if args.only_anomaly and label in ('Normal', 'A'):
+            continue
+        if args.max_videos is not None and shown >= args.max_videos:
+            continue
+        shown += 1
+        n_snip = len(score)
+        n_frames = n_snip * FRAMES_PER_SNIPPET
+
+        s = display_score(score)
+        segs = scores_to_segments(s, threshold, args.min_seg, args.merge_gap)
+        frame_scores = np.repeat(s, FRAMES_PER_SNIPPET)
+        segs_f = [(a * FRAMES_PER_SNIPPET, b * FRAMES_PER_SNIPPET) for a, b in segs]
+        iou = frame_iou(segments_to_mask(segs_f, n_frames), gt_frames)
+
+        # 이상 클래스: 클래스 0(normal)을 제외한 확률 중 최댓값
+        snip_cls = probs[:, 1:].argmax(axis=1) + 1
+        frame_classes = np.repeat([prompt_text[c] for c in snip_cls], FRAMES_PER_SNIPPET)
+        if segs:
+            in_seg = segments_to_mask(segs, n_snip)
+            video_cls = prompt_text[int(probs[in_seg, 1:].mean(0).argmax()) + 1]
+        else:
+            video_cls = prompt_text[0]
+
+        for a, b in segs:
+            seg_rows.append({
+                'video': name, 'gt_label': label, 'pred_class': prompt_text[int(probs[a:b, 1:].mean(0).argmax()) + 1],
+                'start_frame': a * FRAMES_PER_SNIPPET, 'end_frame': b * FRAMES_PER_SNIPPET,
+                'start_sec': round(a * FRAMES_PER_SNIPPET / args.fps, 2),
+                'end_sec': round(b * FRAMES_PER_SNIPPET / args.fps, 2),
+                'max_score': round(float(s[a:b].max()), 4)})
+
+        vid_auc = None
+        if 0 < gt_frames.sum() < len(gt_frames):
+            vid_auc = float(roc_auc_score(gt_frames, np.repeat(score, FRAMES_PER_SNIPPET)))
+        gt_mean = float(frame_scores[gt_frames].mean()) if gt_frames.any() else None
+        video_rows.append({'video': name, 'gt_label': label, 'pred_class': video_cls,
+                           'num_segments': len(segs), 'frame_iou': None if iou is None else round(iou, 4),
+                           'video_auc': None if vid_auc is None else round(vid_auc, 4),
+                           'max_score': round(float(np.max(score)), 4),  # 정규화 전 원점수
+                           'mean_score_in_gt': None if gt_mean is None else round(gt_mean, 4)})
+
+        extra = f'GT: {label}   pred: {video_cls}' + ('' if iou is None else f'   IoU {iou:.2f}') \
+            + ('' if vid_auc is None else f'   AUC {vid_auc:.2f}')
+        plot_video(os.path.join(plot_dir, f'{name}.png'), name, frame_scores, gt_frames,
+                   segs_f, threshold, extra,
+                   ylabel='relative score (per-video)' if args.norm == 'video' else 'anomaly score')
+
+        if args.video_dir:
+            vpath = find_video_file(args.video_dir, name)
+            if vpath is None:
+                print(f'  [skip] 원본 영상 없음: {name}')
+            else:
+                render_overlay(vpath, os.path.join(vid_dir, f'{name}_demo.mp4'),
+                               frame_scores, gt_frames, frame_classes, threshold,
+                               heatmapper=heatmapper, heat_stride=args.heatmap_stride,
+                               peak_png=os.path.join(args.out_dir, 'heatmaps', f'{name}_peak.png')
+                               if heatmapper is not None else None)
+        print(f'[{shown}] {name}: GT={label} pred={video_cls} segments={len(segs)} max={s.max():.3f}'
+              + ('' if iou is None else f' IoU={iou:.3f}') + ('' if vid_auc is None else f' AUC={vid_auc:.3f}'))
+
     ious = [r['frame_iou'] for r in video_rows if r['frame_iou'] is not None and r['gt_label'] not in ('Normal', 'A')]
     summary = {
         'checkpoint': args.checkpoint, 'dataset': args.dataset, 'inference_mode': args.inference_mode,
-        'roc_auc': float(roc_auc_score(gt_all[:m], scores_f[:m])),
-        'ap': float(average_precision_score(gt_all[:m], scores_f[:m])),
-        'threshold': args.threshold, 'smooth': args.smooth, 'min_seg': args.min_seg, 'merge_gap': args.merge_gap,
+        'roc_auc': float(roc_auc_score(gt_m, scores_f[:m])),
+        'ap': float(average_precision_score(gt_m, scores_f[:m])),
+        'threshold': threshold, 'threshold_mode': str(args.threshold), 'norm': args.norm,
+        'smooth': args.smooth, 'min_seg': args.min_seg, 'merge_gap': args.merge_gap,
         'videos_rendered': len(video_rows),
         'mean_frame_iou_anomalous': None if not ious else round(float(np.mean(ious)), 4),
     }
@@ -394,7 +497,8 @@ def main():
     write_csv(os.path.join(args.out_dir, 'segments.csv'), seg_rows,
               ['video', 'gt_label', 'pred_class', 'start_frame', 'end_frame', 'start_sec', 'end_sec', 'max_score'])
     write_csv(os.path.join(args.out_dir, 'per_video.csv'), video_rows,
-              ['video', 'gt_label', 'pred_class', 'num_segments', 'frame_iou', 'video_auc', 'max_score'])
+              ['video', 'gt_label', 'pred_class', 'num_segments', 'frame_iou', 'video_auc', 'max_score',
+               'mean_score_in_gt'])
     with open(os.path.join(args.out_dir, 'summary.json'), 'w', encoding='utf-8') as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
 
