@@ -1,0 +1,51 @@
+% Date kind: consolidated report-date, 2026-10-08.
+% Experiment end: event PEL 2026-10-07T19:54:53+09:00;
+% scene PEL 2026-10-08T16:09:24+09:00; baseline execution dates unknown.
+% Source: user-pasted terminal outputs and previously supplied run commands.
+% Linux full logs, manifests and summary.json files not available locally.
+% Linux execution commit/run IDs: unknown; no independent reproducibility audit.
+% UCF-Crime global frame-level test evaluation; event 13 clients, scene 9 clients.
+% FedAvg; server optimizer none; personalization none; local policy none.
+% Existing aggregation unit: normal + anomaly DataLoader batch counts.
+% 20 rounds x 10 local epochs; batch size 64 per normal/anomaly loader;
+% AdamW learning rate 0.0001; seed 88888888 only; no mean/std.
+% Candidate: MIL-based classification loss + 1.0 * fixed_bank PEL; temperature 0.09;
+% fixed text bank of 14 class words; no expanded prompt JSON.
+% User-reported environment: RTX 3090 Ti; Python 3.11; torch 2.5.1+cu121.
+% Best AUC: highest test ROC-AUC across rounds. Final: round 20.
+% Best AP: independent maximum AP over rounds; not reported.
+% Selected AP: AP at best-AUC round; not reported. Neither is the final AP.
+% Event baseline raw: best AUC .8527366579931893;
+% final AUC .8523379086512399; final AP .2665676698745457.
+% Event PEL raw: best AUC .861960712247761;
+% final AUC .8399802397232; final AP .25301745355987004.
+% Scene baseline raw: best AUC .8467936457438979;
+% final AUC .8383317264372787; final AP .24804702716894406.
+% Scene PEL raw: best AUC .8450755933287541;
+% final AUC .8231110160342242; final AP .24009097454501535.
+% Wall times: event baseline unknown; event PEL 5633.312 s;
+% scene baseline 4790.685 s; scene PEL 4785.422 s.
+% All user metrics preserved as raw fractions above; display as percent.
+% Deltas computed from raw fractions before rounding, in percentage points.
+% Bold only within each split's comparable baseline/candidate pair.
+% Requires booktabs, amsmath, graphicx, caption in the paper preamble.
+\begin{table*}[t]
+  \centering
+  \caption{UCF-Crime event and scene comparisons using FedAvg, 20 rounds, 10 local epochs, and seed 88888888. Event uses 13 clients; scene uses 9. Metrics are percentages; higher is better. Best AUC is the test-set maximum; Best AP is the independent AP maximum; Selected AP is AP at the best-AUC round. Unreported AP values are shown as --. Final metrics are from round 20. Bold indicates the higher value within each split. Differences are percentage points.}
+  \label{tab:ucf-event-scene-fixed-bank-pel}
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{llrrrrr}
+    \toprule
+    Split & Method & \shortstack{Best AUC\\($\uparrow$)} & \shortstack{Best AP\\($\uparrow$)} & \shortstack{Selected\\AP} & \shortstack{Final AUC\\($\uparrow$)} & \shortstack{Final AP\\($\uparrow$)} \\
+    \midrule
+    Event & Fed-WSVAD & 85.27 & -- & -- & \textbf{85.23} & \textbf{26.66} \\
+          & + Fixed-bank PEL & \textbf{86.20} & -- & -- & 84.00 & 25.30 \\
+          & Difference (pp) & +0.92 & -- & -- & $-1.24$ & $-1.36$ \\
+    \midrule
+    Scene & Fed-WSVAD & \textbf{84.68} & -- & -- & \textbf{83.83} & \textbf{24.80} \\
+          & + Fixed-bank PEL & 84.51 & -- & -- & 82.31 & 24.01 \\
+          & Difference (pp) & $-0.17$ & -- & -- & $-1.52$ & $-0.80$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}

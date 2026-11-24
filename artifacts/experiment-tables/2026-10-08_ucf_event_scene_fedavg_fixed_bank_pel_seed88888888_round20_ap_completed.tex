@@ -1,0 +1,57 @@
+% Date kind: consolidated report-date, 2026-10-08.
+% Source: validated docs/experiments/*_run001.md experiment-results JSON.
+% Round evidence: artifacts/experiment-metrics/2026-10-08_ucf_event_scene_reported_rounds.json.
+% Source provenance: user-pasted terminal logs; no independent training rerun.
+% Selection: highest test ROC-AUC; independent best AP; AP at best ROC; final round 20.
+% Shared: UCF, FedAvg, no server optimizer/personalization, seed 88888888 only.
+% 20 rounds x 10 local epochs; batch64 per loader; AdamW LR .0001.
+% PEL: fixed_bank, weight1.0, temperature.09, 14 class-word anchors.
+% Environment user report: RTX3090Ti, Python3.11, torch2.5.1+cu121.
+% Linux commit, run IDs and feature manifest unknown; test selection not validation.
+% Event baseline execution date unknown; record date is report-date.
+% Other record dates are experiment dates, confirmed by pasted timestamps.
+% Same-split pairwise bold; values percent, differences percentage points; no std.
+% Record: 2026-10-08_ucf_event_baseline_run001.md
+% roc_auc best_roc_round: 0.8527366579931893 (round 18).
+% ap independent_best_ap: 0.2865852068513203 (round 19).
+% ap best_roc_round: 0.26167553477541894 (round 18).
+% roc_auc final: 0.8523379086512399 (round 20).
+% ap final: 0.2665676698745457 (round 20).
+% Record: 2026-10-07_ucf_event_fixed_bank_pel_run001.md
+% roc_auc best_roc_round: 0.861960712247761 (round 11).
+% ap independent_best_ap: 0.2968212240819206 (round 12).
+% ap best_roc_round: 0.28305119154995106 (round 11).
+% roc_auc final: 0.8399802397232 (round 20).
+% ap final: 0.25301745355987004 (round 20).
+% Record: 2026-10-08_ucf_scene_baseline_run001.md
+% roc_auc best_roc_round: 0.8467936457438979 (round 19).
+% ap independent_best_ap: 0.26974393292285803 (round 14).
+% ap best_roc_round: 0.26954786949140835 (round 19).
+% roc_auc final: 0.8383317264372787 (round 20).
+% ap final: 0.24804702716894406 (round 20).
+% Record: 2026-10-08_ucf_scene_fixed_bank_pel_run001.md
+% roc_auc best_roc_round: 0.8450755933287541 (round 8).
+% ap independent_best_ap: 0.2729443800221195 (round 7).
+% ap best_roc_round: 0.2677944190675527 (round 8).
+% roc_auc final: 0.8231110160342242 (round 20).
+% ap final: 0.24009097454501535 (round 20).
+\begin{table*}[t]
+  \centering
+  \caption{UCF-Crime event (13 clients) and scene (9 clients) under FedAvg, 20 rounds, 10 local epochs, and seed 88888888. Metrics in percent; higher is better. Best AUC and Best AP are independent test-set maxima; Selected AP is AP at the best-AUC checkpoint. Final metrics are from round 20. Bold compares methods within each split. Differences are percentage points. Single-seed results.}
+  \label{tab:ucf-event-scene-fixed-bank-pel-complete-ap}
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{llrrrrr}
+    \toprule
+    Split & Method & \shortstack{Best AUC\\($\uparrow$)} & \shortstack{Best AP\\($\uparrow$)} & \shortstack{Selected\\AP} & \shortstack{Final AUC\\($\uparrow$)} & \shortstack{Final AP\\($\uparrow$)} \\
+    \midrule
+    Event & Fed-WSVAD & 85.27 & 28.66 & 26.17 & \textbf{85.23} & \textbf{26.66} \\
+     & + Fixed-bank PEL & \textbf{86.20} & \textbf{29.68} & \textbf{28.31} & 84.00 & 25.30 \\
+    & Difference (pp) & $+0.92$ & $+1.02$ & $+2.14$ & $-1.24$ & $-1.36$ \\
+    \midrule
+    Scene & Fed-WSVAD & \textbf{84.68} & 26.97 & \textbf{26.95} & \textbf{83.83} & \textbf{24.80} \\
+     & + Fixed-bank PEL & 84.51 & \textbf{27.29} & 26.78 & 82.31 & 24.01 \\
+    & Difference (pp) & $-0.17$ & $+0.32$ & $-0.18$ & $-1.52$ & $-0.80$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}

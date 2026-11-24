@@ -1,0 +1,30 @@
+client='Fight' prompt_word='fighting' device=cuda:1
+NOTE: evaluated on the full shared cctv test set (all 6 classes + Normal), same proxy-metric convention as fed/server.py's evaluate_personalized -- this client's model never saw the other 5 classes during training.
+
+=== baseline (CLASM only) ===
+  [baseline] epoch 1/10  CLASM=0.9276
+  [baseline] epoch 2/10  CLASM=0.3085
+  [baseline] epoch 3/10  CLASM=0.0668
+  [baseline] epoch 4/10  CLASM=0.0061
+  [baseline] epoch 5/10  CLASM=0.0101
+  [baseline] epoch 6/10  CLASM=0.0012
+  [baseline] epoch 7/10  CLASM=0.0056
+  [baseline] epoch 8/10  CLASM=0.0000
+  [baseline] epoch 9/10  CLASM=0.0001
+  [baseline] epoch 10/10  CLASM=0.0029
+baseline: roc=0.5584 ap=0.5964
+
+=== + PEL4VAD contrastive loss ===
+  [pel4vad] epoch 1/10  CLASM=0.9240  PEL4VAD=0.6238
+  [pel4vad] epoch 2/10  CLASM=0.2968  PEL4VAD=0.6102
+  [pel4vad] epoch 3/10  CLASM=0.0626  PEL4VAD=0.5609
+  [pel4vad] epoch 4/10  CLASM=0.0061  PEL4VAD=0.5460
+  [pel4vad] epoch 5/10  CLASM=0.0116  PEL4VAD=0.5491
+  [pel4vad] epoch 6/10  CLASM=0.0260  PEL4VAD=0.4310
+  [pel4vad] epoch 7/10  CLASM=2.4361  PEL4VAD=0.5578
+  [pel4vad] epoch 8/10  CLASM=3.8715  PEL4VAD=1.2788
+  [pel4vad] epoch 9/10  CLASM=5.7941  PEL4VAD=1.4306
+  [pel4vad] epoch 10/10  CLASM=6.3709  PEL4VAD=1.3693
+pel4vad : roc=0.5508 ap=0.5881
+
+delta: roc=-0.0076  ap=-0.0083

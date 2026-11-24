@@ -1,0 +1,79 @@
+{
+  "best_selection_metric": 0.861960712247761,
+  "best_checkpoint_evaluation": {
+    "roc": 0.861960712247761,
+    "ap": 0.28305119154995106
+  },
+  "independent_best_ap": 0.2968212240819206,
+  "final_selection_metric": 0.8399802397232,
+  "final_evaluation": {
+    "roc": 0.8399802397232,
+    "ap": 0.25301745355987004
+  },
+  "checkpoint_selection": "best round on test set (existing protocol)",
+  "pel_bank": {
+    "classes": [
+      "Normal",
+      "Abuse",
+      "Arrest",
+      "Arson",
+      "Assault",
+      "Burglary",
+      "Explosion",
+      "Fighting",
+      "RoadAccidents",
+      "Robbery",
+      "Shooting",
+      "Shoplifting",
+      "Stealing",
+      "Vandalism"
+    ],
+    "prompts": {
+      "Normal": [
+        "normal"
+      ],
+      "Abuse": [
+        "abuse"
+      ],
+      "Arrest": [
+        "arrest"
+      ],
+      "Arson": [
+        "arson"
+      ],
+      "Assault": [
+        "assault"
+      ],
+      "Burglary": [
+        "burglary"
+      ],
+      "Explosion": [
+        "explosion"
+      ],
+      "Fighting": [
+        "fighting"
+      ],
+      "RoadAccidents": [
+        "roadAccidents"
+      ],
+      "Robbery": [
+        "robbery"
+      ],
+      "Shooting": [
+        "shooting"
+      ],
+      "Shoplifting": [
+        "shoplifting"
+      ],
+      "Stealing": [
+        "stealing"
+      ],
+      "Vandalism": [
+        "vandalism"
+      ]
+    },
+    "encoder": "frozen CLIP ViT-B/16 encode_text_original",
+    "pooling": "mean of normalized prompt embeddings, then normalize",
+    "sha256": "824c5b6c64385bcf5ad9a55cfd1359c08f802d106e2fb4b1e7d733f06ed76fa6"
+  }
+}

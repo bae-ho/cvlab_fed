@@ -1,0 +1,3 @@
+*.sh text eol=lf
+artifacts/experiment-metrics/**/*.json text eol=lf
+artifacts/experiment-metrics/**/*.jsonl text eol=lf

@@ -1,0 +1,306 @@
+-------- round: 1 / 20 --------
+round 1, client: 1
+    wsvad_loss: 1.6969, contrastive_loss: 5.2644
+round 1, client: 2
+    wsvad_loss: 2.2166, contrastive_loss: 5.4106
+round 1, client: 3
+    wsvad_loss: 4.9555, contrastive_loss: 4.8667
+round 1, client: 4
+    wsvad_loss: 1.5894, contrastive_loss: 5.3284
+round 1, client: 5
+    wsvad_loss: 2.1538, contrastive_loss: 5.3147
+round 1, client: 6
+    wsvad_loss: 1.3721, contrastive_loss: 5.2246
+round 1 : roc: 0.5951479819515131 , ap: 0.639901963155622
+best: 0.5951479819515131
+-------- round: 2 / 20 --------
+round 2, client: 1
+    wsvad_loss: 1.5978, contrastive_loss: 4.9992
+round 2, client: 2
+    wsvad_loss: 2.3326, contrastive_loss: 4.2794
+round 2, client: 3
+    wsvad_loss: 51.8199, contrastive_loss: 7.8958
+round 2, client: 4
+    wsvad_loss: 2.0826, contrastive_loss: 5.2485
+round 2, client: 5
+    wsvad_loss: 2.4455, contrastive_loss: 5.2736
+round 2, client: 6
+    wsvad_loss: 3.2799, contrastive_loss: 5.2910
+round 2 : roc: 0.5669410257506989 , ap: 0.6244393832752135
+best: 0.5951479819515131
+-------- round: 3 / 20 --------
+round 3, client: 1
+    wsvad_loss: 2.9204, contrastive_loss: 5.1875
+round 3, client: 2
+    wsvad_loss: 10.8311, contrastive_loss: 6.0235
+round 3, client: 3
+    wsvad_loss: 59.7920, contrastive_loss: 8.3053
+round 3, client: 4
+    wsvad_loss: 0.2878, contrastive_loss: 4.8761
+round 3, client: 5
+    wsvad_loss: 0.1531, contrastive_loss: 4.9020
+round 3, client: 6
+    wsvad_loss: 0.7889, contrastive_loss: 4.9179
+round 3 : roc: 0.5165398191357088 , ap: 0.5827475093116347
+best: 0.5951479819515131
+-------- round: 4 / 20 --------
+round 4, client: 1
+    wsvad_loss: 11.8515, contrastive_loss: 5.1119
+round 4, client: 2
+    wsvad_loss: 14.2752, contrastive_loss: 5.6832
+round 4, client: 3
+    wsvad_loss: 59.9431, contrastive_loss: 8.0540
+round 4, client: 4
+    wsvad_loss: 0.0467, contrastive_loss: 3.9769
+round 4, client: 5
+    wsvad_loss: 0.8244, contrastive_loss: 4.8892
+round 4, client: 6
+    wsvad_loss: 0.1904, contrastive_loss: 4.8546
+round 4 : roc: 0.5549128216112528 , ap: 0.6154475828634408
+best: 0.5951479819515131
+-------- round: 5 / 20 --------
+round 5, client: 1
+    wsvad_loss: 20.3096, contrastive_loss: 5.0480
+round 5, client: 2
+    wsvad_loss: 27.1712, contrastive_loss: 6.0253
+round 5, client: 3
+    wsvad_loss: 78.6134, contrastive_loss: 9.2034
+round 5, client: 4
+    wsvad_loss: 0.3514, contrastive_loss: 3.7962
+round 5, client: 5
+    wsvad_loss: 0.3598, contrastive_loss: 4.9886
+round 5, client: 6
+    wsvad_loss: 4.8643, contrastive_loss: 5.0166
+round 5 : roc: 0.49670602367601213 , ap: 0.5488017918970279
+best: 0.5951479819515131
+-------- round: 6 / 20 --------
+round 6, client: 1
+    wsvad_loss: 18.2088, contrastive_loss: 4.9675
+round 6, client: 2
+    wsvad_loss: 20.1110, contrastive_loss: 5.7849
+round 6, client: 3
+    wsvad_loss: 29.7250, contrastive_loss: 6.7618
+round 6, client: 4
+    wsvad_loss: 81.4860, contrastive_loss: 7.5311
+round 6, client: 5
+    wsvad_loss: 0.7332, contrastive_loss: 4.8441
+round 6, client: 6
+    wsvad_loss: 5.5196, contrastive_loss: 4.9656
+round 6 : roc: 0.5129909573514528 , ap: 0.565898223927025
+best: 0.5951479819515131
+-------- round: 7 / 20 --------
+round 7, client: 1
+    wsvad_loss: 65.8770, contrastive_loss: 4.1774
+round 7, client: 2
+    wsvad_loss: 109.5739, contrastive_loss: 4.0240
+round 7, client: 3
+    wsvad_loss: 51.3803, contrastive_loss: 7.6586
+round 7, client: 4
+    wsvad_loss: 1.6491, contrastive_loss: 1.3185
+round 7, client: 5
+    wsvad_loss: 155.0206, contrastive_loss: 11.9497
+round 7, client: 6
+    wsvad_loss: 84.4045, contrastive_loss: 4.4365
+round 7 : roc: 0.5076438087340978 , ap: 0.5645464605356264
+best: 0.5951479819515131
+-------- round: 8 / 20 --------
+round 8, client: 1
+    wsvad_loss: 108.5082, contrastive_loss: 6.8226
+round 8, client: 2
+    wsvad_loss: 181.7519, contrastive_loss: 6.2575
+round 8, client: 3
+    wsvad_loss: 103.1573, contrastive_loss: 5.5251
+round 8, client: 4
+    wsvad_loss: 109.3061, contrastive_loss: 9.0528
+round 8, client: 5
+    wsvad_loss: 67.2999, contrastive_loss: 8.4879
+round 8, client: 6
+    wsvad_loss: 118.6513, contrastive_loss: 6.2247
+round 8 : roc: 0.49994059779991123 , ap: 0.5605744602826296
+best: 0.5951479819515131
+-------- round: 9 / 20 --------
+round 9, client: 1
+    wsvad_loss: 144.6358, contrastive_loss: 8.3157
+round 9, client: 2
+    wsvad_loss: 186.4067, contrastive_loss: 6.6627
+round 9, client: 3
+    wsvad_loss: 172.7644, contrastive_loss: 5.7459
+round 9, client: 4
+    wsvad_loss: 119.3276, contrastive_loss: 9.6686
+round 9, client: 5
+    wsvad_loss: 106.4100, contrastive_loss: 10.6319
+round 9, client: 6
+    wsvad_loss: 154.3859, contrastive_loss: 7.6543
+round 9 : roc: 0.4985866639990262 , ap: 0.5598887512752698
+best: 0.5951479819515131
+-------- round: 10 / 20 --------
+round 10, client: 1
+    wsvad_loss: 150.8090, contrastive_loss: 8.5164
+round 10, client: 2
+    wsvad_loss: 187.5769, contrastive_loss: 6.6855
+round 10, client: 3
+    wsvad_loss: 182.5656, contrastive_loss: 5.8431
+round 10, client: 4
+    wsvad_loss: 117.6534, contrastive_loss: 9.6694
+round 10, client: 5
+    wsvad_loss: 106.5428, contrastive_loss: 10.8094
+round 10, client: 6
+    wsvad_loss: 159.1569, contrastive_loss: 7.8054
+round 10 : roc: 0.49853356049300984 , ap: 0.5598650244380703
+best: 0.5951479819515131
+-------- round: 11 / 20 --------
+round 11, client: 1
+    wsvad_loss: 149.7717, contrastive_loss: 8.6141
+round 11, client: 2
+    wsvad_loss: 187.5057, contrastive_loss: 6.7113
+round 11, client: 3
+    wsvad_loss: 185.6977, contrastive_loss: 5.8470
+round 11, client: 4
+    wsvad_loss: 122.2037, contrastive_loss: 9.7751
+round 11, client: 5
+    wsvad_loss: 109.1657, contrastive_loss: 10.9778
+round 11, client: 6
+    wsvad_loss: 164.0862, contrastive_loss: 7.9078
+round 11 : roc: 0.49875952977113913 , ap: 0.5599811914288981
+best: 0.5951479819515131
+-------- round: 12 / 20 --------
+round 12, client: 1
+    wsvad_loss: 153.3424, contrastive_loss: 8.7054
+round 12, client: 2
+    wsvad_loss: 189.7932, contrastive_loss: 6.7376
+round 12, client: 3
+    wsvad_loss: 191.5915, contrastive_loss: 5.8533
+round 12, client: 4
+    wsvad_loss: 122.5989, contrastive_loss: 9.8331
+round 12, client: 5
+    wsvad_loss: 112.0311, contrastive_loss: 11.1043
+round 12, client: 6
+    wsvad_loss: 167.0919, contrastive_loss: 8.0177
+round 12 : roc: 0.5001538293964025 , ap: 0.5606839744707208
+best: 0.5951479819515131
+-------- round: 13 / 20 --------
+round 13, client: 1
+    wsvad_loss: 155.1487, contrastive_loss: 8.7645
+round 13, client: 2
+    wsvad_loss: 190.5369, contrastive_loss: 6.7604
+round 13, client: 3
+    wsvad_loss: 190.1935, contrastive_loss: 5.8562
+round 13, client: 4
+    wsvad_loss: 124.0307, contrastive_loss: 9.8785
+round 13, client: 5
+    wsvad_loss: 113.1382, contrastive_loss: 11.1559
+round 13, client: 6
+    wsvad_loss: 165.5649, contrastive_loss: 8.0570
+round 13 : roc: 0.49973065100624264 , ap: 0.5604737622218626
+best: 0.5951479819515131
+-------- round: 14 / 20 --------
+round 14, client: 1
+    wsvad_loss: 157.4218, contrastive_loss: 8.8309
+round 14, client: 2
+    wsvad_loss: 192.7330, contrastive_loss: 6.8024
+round 14, client: 3
+    wsvad_loss: 196.9180, contrastive_loss: 5.8598
+round 14, client: 4
+    wsvad_loss: 124.9420, contrastive_loss: 9.9504
+round 14, client: 5
+    wsvad_loss: 111.3713, contrastive_loss: 11.2218
+round 14, client: 6
+    wsvad_loss: 167.2326, contrastive_loss: 8.0937
+round 14 : roc: 0.5004236669985325 , ap: 0.5608229970584986
+best: 0.5951479819515131
+-------- round: 15 / 20 --------
+round 15, client: 1
+    wsvad_loss: 155.3079, contrastive_loss: 8.8695
+round 15, client: 2
+    wsvad_loss: 189.5447, contrastive_loss: 6.7964
+round 15, client: 3
+    wsvad_loss: 197.2610, contrastive_loss: 5.8662
+round 15, client: 4
+    wsvad_loss: 126.9022, contrastive_loss: 10.0007
+round 15, client: 5
+    wsvad_loss: 111.9357, contrastive_loss: 11.2913
+round 15, client: 6
+    wsvad_loss: 169.2670, contrastive_loss: 8.1445
+round 15 : roc: 0.500902541905479 , ap: 0.5610658437067235
+best: 0.5951479819515131
+-------- round: 16 / 20 --------
+round 16, client: 1
+    wsvad_loss: 159.4677, contrastive_loss: 8.9436
+round 16, client: 2
+    wsvad_loss: 190.6629, contrastive_loss: 6.8274
+round 16, client: 3
+    wsvad_loss: 199.5467, contrastive_loss: 5.8661
+round 16, client: 4
+    wsvad_loss: 126.9474, contrastive_loss: 10.0498
+round 16, client: 5
+    wsvad_loss: 116.2004, contrastive_loss: 11.4008
+round 16, client: 6
+    wsvad_loss: 169.9483, contrastive_loss: 8.1767
+round 16 : roc: 0.5012193052622196 , ap: 0.5612260607313879
+best: 0.5951479819515131
+-------- round: 17 / 20 --------
+round 17, client: 1
+    wsvad_loss: 159.7284, contrastive_loss: 8.9788
+round 17, client: 2
+    wsvad_loss: 192.0043, contrastive_loss: 6.8545
+round 17, client: 3
+    wsvad_loss: 199.0871, contrastive_loss: 5.8580
+round 17, client: 4
+    wsvad_loss: 127.0353, contrastive_loss: 10.0629
+round 17, client: 5
+    wsvad_loss: 114.7753, contrastive_loss: 11.4457
+round 17, client: 6
+    wsvad_loss: 170.6603, contrastive_loss: 8.2180
+round 17 : roc: 0.5022415707321417 , ap: 0.5617393945972755
+best: 0.5951479819515131
+-------- round: 18 / 20 --------
+round 18, client: 1
+    wsvad_loss: 157.7202, contrastive_loss: 9.0231
+round 18, client: 2
+    wsvad_loss: 192.8974, contrastive_loss: 6.8638
+round 18, client: 3
+    wsvad_loss: 199.4637, contrastive_loss: 5.8615
+round 18, client: 4
+    wsvad_loss: 128.6842, contrastive_loss: 10.1107
+round 18, client: 5
+    wsvad_loss: 117.1681, contrastive_loss: 11.4941
+round 18, client: 6
+    wsvad_loss: 170.5966, contrastive_loss: 8.2481
+round 18 : roc: 0.5023893336443914 , ap: 0.5618142979177412
+best: 0.5951479819515131
+-------- round: 19 / 20 --------
+round 19, client: 1
+    wsvad_loss: 159.5295, contrastive_loss: 9.0604
+round 19, client: 2
+    wsvad_loss: 194.8554, contrastive_loss: 6.8953
+round 19, client: 3
+    wsvad_loss: 201.6526, contrastive_loss: 5.8698
+round 19, client: 4
+    wsvad_loss: 129.6633, contrastive_loss: 10.1535
+round 19, client: 5
+    wsvad_loss: 115.9747, contrastive_loss: 11.5374
+round 19, client: 6
+    wsvad_loss: 173.0879, contrastive_loss: 8.2961
+round 19 : roc: 0.5026209969032606 , ap: 0.5619312244681145
+best: 0.5951479819515131
+-------- round: 20 / 20 --------
+round 20, client: 1
+    wsvad_loss: 160.9015, contrastive_loss: 9.0882
+round 20, client: 2
+    wsvad_loss: 193.2704, contrastive_loss: 6.9009
+round 20, client: 3
+    wsvad_loss: 201.5651, contrastive_loss: 5.8637
+round 20, client: 4
+    wsvad_loss: 131.1505, contrastive_loss: 10.2017
+round 20, client: 5
+    wsvad_loss: 117.8035, contrastive_loss: 11.6024
+round 20, client: 6
+    wsvad_loss: 172.8822, contrastive_loss: 8.3165
+round 20 : roc: 0.5031922478188964 , ap: 0.5622184402984279
+best: 0.5951479819515131
+round 20 : client 0 personalized (on global test set) roc: 0.5951499351755773 , ap: 0.63990262577555
+round 20 : client 1 personalized (on global test set) roc: 0.5951519549181084 , ap: 0.6399066371929042
+round 20 : client 2 personalized (on global test set) roc: 0.595149534855351 , ap: 0.6399032657333841
+round 20 : client 3 personalized (on global test set) roc: 0.5951479190613265 , ap: 0.6399017271103287
+round 20 : client 4 personalized (on global test set) roc: 0.5951515255716421 , ap: 0.6399029518492707
+round 20 : client 5 personalized (on global test set) roc: 0.5951487571940054 , ap: 0.6399024615691451

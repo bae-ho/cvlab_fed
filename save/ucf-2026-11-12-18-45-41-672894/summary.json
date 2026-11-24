@@ -1,0 +1,15 @@
+{
+  "best_selection_metric": 0.8399219787749452,
+  "best_checkpoint_evaluation": {
+    "roc": 0.8399219787749452,
+    "ap": 0.24063190677062946
+  },
+  "independent_best_ap": 0.24063190677062946,
+  "final_selection_metric": 0.836562494106013,
+  "final_evaluation": {
+    "roc": 0.836562494106013,
+    "ap": 0.23683168567706658
+  },
+  "checkpoint_selection": "best round on test set (existing protocol)",
+  "pel_bank": null
+}

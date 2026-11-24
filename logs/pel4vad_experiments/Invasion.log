@@ -1,0 +1,30 @@
+client='Invasion' prompt_word='trespassing' device=cuda:1
+NOTE: evaluated on the full shared cctv test set (all 6 classes + Normal), same proxy-metric convention as fed/server.py's evaluate_personalized -- this client's model never saw the other 5 classes during training.
+
+=== baseline (CLASM only) ===
+  [baseline] epoch 1/10  CLASM=0.7392
+  [baseline] epoch 2/10  CLASM=0.0632
+  [baseline] epoch 3/10  CLASM=0.0181
+  [baseline] epoch 4/10  CLASM=0.4104
+  [baseline] epoch 5/10  CLASM=0.0030
+  [baseline] epoch 6/10  CLASM=0.0296
+  [baseline] epoch 7/10  CLASM=0.0425
+  [baseline] epoch 8/10  CLASM=0.0013
+  [baseline] epoch 9/10  CLASM=0.0013
+  [baseline] epoch 10/10  CLASM=0.0036
+baseline: roc=0.3639 ap=0.4629
+
+=== + PEL4VAD contrastive loss ===
+  [pel4vad] epoch 1/10  CLASM=0.8472  PEL4VAD=0.6159
+  [pel4vad] epoch 2/10  CLASM=0.0653  PEL4VAD=0.5494
+  [pel4vad] epoch 3/10  CLASM=0.0068  PEL4VAD=0.5071
+  [pel4vad] epoch 4/10  CLASM=0.4322  PEL4VAD=0.5529
+  [pel4vad] epoch 5/10  CLASM=0.0207  PEL4VAD=0.5355
+  [pel4vad] epoch 6/10  CLASM=0.0199  PEL4VAD=0.5118
+  [pel4vad] epoch 7/10  CLASM=0.0059  PEL4VAD=0.4983
+  [pel4vad] epoch 8/10  CLASM=0.0020  PEL4VAD=0.5271
+  [pel4vad] epoch 9/10  CLASM=0.2386  PEL4VAD=0.5942
+  [pel4vad] epoch 10/10  CLASM=0.7503  PEL4VAD=0.6221
+pel4vad : roc=0.3512 ap=0.4639
+
+delta: roc=-0.0127  ap=+0.0011

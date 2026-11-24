@@ -1,0 +1,30 @@
+dataset='ucf' client='Fighting' prompt_word='fighting' device=cuda:1
+NOTE: evaluated on the full shared ucf test set (all classes + Normal), same proxy-metric convention as fed/server.py's evaluate_personalized -- this client's model never saw the other classes during training.
+
+=== baseline (CLASM only) ===
+  [baseline] epoch 1/10  CLASM=0.3540
+  [baseline] epoch 2/10  CLASM=0.0046
+  [baseline] epoch 3/10  CLASM=0.0016
+  [baseline] epoch 4/10  CLASM=0.0003
+  [baseline] epoch 5/10  CLASM=0.0001
+  [baseline] epoch 6/10  CLASM=0.0000
+  [baseline] epoch 7/10  CLASM=0.0000
+  [baseline] epoch 8/10  CLASM=0.0000
+  [baseline] epoch 9/10  CLASM=0.0000
+  [baseline] epoch 10/10  CLASM=0.0000
+baseline: roc=0.7608 ap=0.1778
+
+=== + PEL4VAD contrastive loss ===
+  [pel4vad] epoch 1/10  CLASM=0.3538  PEL4VAD=0.5640
+  [pel4vad] epoch 2/10  CLASM=0.4671  PEL4VAD=0.5897
+  [pel4vad] epoch 3/10  CLASM=0.5874  PEL4VAD=0.6043
+  [pel4vad] epoch 4/10  CLASM=0.5941  PEL4VAD=0.6048
+  [pel4vad] epoch 5/10  CLASM=0.5955  PEL4VAD=0.6049
+  [pel4vad] epoch 6/10  CLASM=0.5958  PEL4VAD=0.6048
+  [pel4vad] epoch 7/10  CLASM=0.5953  PEL4VAD=0.6049
+  [pel4vad] epoch 8/10  CLASM=0.5941  PEL4VAD=0.6048
+  [pel4vad] epoch 9/10  CLASM=0.5947  PEL4VAD=0.6047
+  [pel4vad] epoch 10/10  CLASM=0.5944  PEL4VAD=0.6049
+pel4vad : roc=0.7673 ap=0.1764
+
+delta: roc=+0.0065  ap=-0.0014

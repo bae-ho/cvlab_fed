@@ -1,0 +1,30 @@
+client='Gathering' prompt_word='gathering' device=cuda:1
+NOTE: evaluated on the full shared cctv test set (all 6 classes + Normal), same proxy-metric convention as fed/server.py's evaluate_personalized -- this client's model never saw the other 5 classes during training.
+
+=== baseline (CLASM only) ===
+  [baseline] epoch 1/10  CLASM=0.5972
+  [baseline] epoch 2/10  CLASM=0.2916
+  [baseline] epoch 3/10  CLASM=0.0984
+  [baseline] epoch 4/10  CLASM=0.0747
+  [baseline] epoch 5/10  CLASM=0.0383
+  [baseline] epoch 6/10  CLASM=0.0015
+  [baseline] epoch 7/10  CLASM=0.0009
+  [baseline] epoch 8/10  CLASM=0.0004
+  [baseline] epoch 9/10  CLASM=0.0005
+  [baseline] epoch 10/10  CLASM=0.0003
+baseline: roc=0.5838 ap=0.6433
+
+=== + PEL4VAD contrastive loss ===
+  [pel4vad] epoch 1/10  CLASM=0.5929  PEL4VAD=0.6244
+  [pel4vad] epoch 2/10  CLASM=0.2970  PEL4VAD=0.5938
+  [pel4vad] epoch 3/10  CLASM=0.0765  PEL4VAD=0.5412
+  [pel4vad] epoch 4/10  CLASM=0.1824  PEL4VAD=0.5602
+  [pel4vad] epoch 5/10  CLASM=0.1431  PEL4VAD=0.5791
+  [pel4vad] epoch 6/10  CLASM=0.1412  PEL4VAD=0.5966
+  [pel4vad] epoch 7/10  CLASM=0.2264  PEL4VAD=0.6071
+  [pel4vad] epoch 8/10  CLASM=0.2657  PEL4VAD=0.6110
+  [pel4vad] epoch 9/10  CLASM=0.3117  PEL4VAD=0.6139
+  [pel4vad] epoch 10/10  CLASM=0.3471  PEL4VAD=0.6173
+pel4vad : roc=0.5451 ap=0.6187
+
+delta: roc=-0.0387  ap=-0.0247

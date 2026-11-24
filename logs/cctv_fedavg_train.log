@@ -1,0 +1,180 @@
+-------- round: 1 / 20 --------
+round 1, client: 1
+round 1, client: 2
+round 1, client: 3
+round 1, client: 4
+round 1, client: 5
+round 1, client: 6
+round 1 : roc: 0.6021981931934817 , ap: 0.6500982153719445
+best: 0.6021981931934817
+-------- round: 2 / 20 --------
+round 2, client: 1
+round 2, client: 2
+round 2, client: 3
+round 2, client: 4
+round 2, client: 5
+round 2, client: 6
+round 2 : roc: 0.5579937138888026 , ap: 0.6020401197920684
+best: 0.6021981931934817
+-------- round: 3 / 20 --------
+round 3, client: 1
+round 3, client: 2
+round 3, client: 3
+round 3, client: 4
+round 3, client: 5
+round 3, client: 6
+round 3 : roc: 0.5149788460028586 , ap: 0.5735584054561877
+best: 0.6021981931934817
+-------- round: 4 / 20 --------
+round 4, client: 1
+round 4, client: 2
+round 4, client: 3
+round 4, client: 4
+round 4, client: 5
+round 4, client: 6
+round 4 : roc: 0.5531496117797248 , ap: 0.6036003968352635
+best: 0.6021981931934817
+-------- round: 5 / 20 --------
+round 5, client: 1
+round 5, client: 2
+round 5, client: 3
+round 5, client: 4
+round 5, client: 5
+round 5, client: 6
+round 5 : roc: 0.5260942389950114 , ap: 0.5732631921872032
+best: 0.6021981931934817
+-------- round: 6 / 20 --------
+round 6, client: 1
+round 6, client: 2
+round 6, client: 3
+round 6, client: 4
+round 6, client: 5
+round 6, client: 6
+round 6 : roc: 0.5587650862158786 , ap: 0.6104911556225743
+best: 0.6021981931934817
+-------- round: 7 / 20 --------
+round 7, client: 1
+round 7, client: 2
+round 7, client: 3
+round 7, client: 4
+round 7, client: 5
+round 7, client: 6
+round 7 : roc: 0.5178754083529358 , ap: 0.5728354904888381
+best: 0.6021981931934817
+-------- round: 8 / 20 --------
+round 8, client: 1
+round 8, client: 2
+round 8, client: 3
+round 8, client: 4
+round 8, client: 5
+round 8, client: 6
+round 8 : roc: 0.5784686445651314 , ap: 0.6381452282531643
+best: 0.6021981931934817
+-------- round: 9 / 20 --------
+round 9, client: 1
+round 9, client: 2
+round 9, client: 3
+round 9, client: 4
+round 9, client: 5
+round 9, client: 6
+round 9 : roc: 0.5349873274217993 , ap: 0.5906218200739783
+best: 0.6021981931934817
+-------- round: 10 / 20 --------
+round 10, client: 1
+round 10, client: 2
+round 10, client: 3
+round 10, client: 4
+round 10, client: 5
+round 10, client: 6
+round 10 : roc: 0.5403721908002828 , ap: 0.5538518318166322
+best: 0.6021981931934817
+-------- round: 11 / 20 --------
+round 11, client: 1
+round 11, client: 2
+round 11, client: 3
+round 11, client: 4
+round 11, client: 5
+round 11, client: 6
+round 11 : roc: 0.5385671081987515 , ap: 0.5547394707114793
+best: 0.6021981931934817
+-------- round: 12 / 20 --------
+round 12, client: 1
+round 12, client: 2
+round 12, client: 3
+round 12, client: 4
+round 12, client: 5
+round 12, client: 6
+round 12 : roc: 0.5479918315613294 , ap: 0.5525986158564747
+best: 0.6021981931934817
+-------- round: 13 / 20 --------
+round 13, client: 1
+round 13, client: 2
+round 13, client: 3
+round 13, client: 4
+round 13, client: 5
+round 13, client: 6
+round 13 : roc: 0.5428714165797559 , ap: 0.551471144105624
+best: 0.6021981931934817
+-------- round: 14 / 20 --------
+round 14, client: 1
+round 14, client: 2
+round 14, client: 3
+round 14, client: 4
+round 14, client: 5
+round 14, client: 6
+round 14 : roc: 0.5373046989701836 , ap: 0.5440181565248661
+best: 0.6021981931934817
+-------- round: 15 / 20 --------
+round 15, client: 1
+round 15, client: 2
+round 15, client: 3
+round 15, client: 4
+round 15, client: 5
+round 15, client: 6
+round 15 : roc: 0.5451997624657002 , ap: 0.5538476433724716
+best: 0.6021981931934817
+-------- round: 16 / 20 --------
+round 16, client: 1
+round 16, client: 2
+round 16, client: 3
+round 16, client: 4
+round 16, client: 5
+round 16, client: 6
+round 16 : roc: 0.5414605417620457 , ap: 0.5454594155524395
+best: 0.6021981931934817
+-------- round: 17 / 20 --------
+round 17, client: 1
+round 17, client: 2
+round 17, client: 3
+round 17, client: 4
+round 17, client: 5
+round 17, client: 6
+round 17 : roc: 0.5421539665405485 , ap: 0.5516513465491877
+best: 0.6021981931934817
+-------- round: 18 / 20 --------
+round 18, client: 1
+round 18, client: 2
+round 18, client: 3
+round 18, client: 4
+round 18, client: 5
+round 18, client: 6
+round 18 : roc: 0.5464216099427701 , ap: 0.5488284778570537
+best: 0.6021981931934817
+-------- round: 19 / 20 --------
+round 19, client: 1
+round 19, client: 2
+round 19, client: 3
+round 19, client: 4
+round 19, client: 5
+round 19, client: 6
+round 19 : roc: 0.5295140210901418 , ap: 0.5447281452179886
+best: 0.6021981931934817
+-------- round: 20 / 20 --------
+round 20, client: 1
+round 20, client: 2
+round 20, client: 3
+round 20, client: 4
+round 20, client: 5
+round 20, client: 6
+round 20 : roc: 0.5230143989186603 , ap: 0.538821331961502
+best: 0.6021981931934817

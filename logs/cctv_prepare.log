@@ -1,0 +1,55 @@
+resuming: 0 videos already in manifest
+[Training] 군집 -> label=Gathering is_normal=False
+[Training] 싸움 -> label=Fight is_normal=False
+    [warn] decoded 4307 frames, json declared 5414
+[Training] 쓰러짐 -> label=Falldown is_normal=False
+    [warn] decoded 3464 frames, json declared 4352
+[Training] 인파밀집_할로윈데이 1주전_금 -> label=Normal is_normal=True
+[Training] 인파밀집_할로윈데이 1주전_토 -> label=Normal is_normal=True
+    [warn] decoded 1793 frames, json declared 1822
+    [warn] decoded 1819 frames, json declared 1848
+    [warn] decoded 1771 frames, json declared 1801
+[Training] 인파밀집_할로윈데이 포함_금 -> label=Crowd is_normal=False
+[Training] 인파밀집_할로윈데이 포함_목 -> label=Crowd is_normal=False
+[Training] 인파밀집_할로윈데이 포함_일 -> label=Crowd is_normal=False
+    [warn] decoded 1830 frames, json declared 1855
+    [warn] decoded 1778 frames, json declared 1808
+    [warn] decoded 1735 frames, json declared 1764
+    [warn] decoded 1823 frames, json declared 1852
+[Training] 침수_0단계_골목길 -> label=Normal is_normal=True
+[Training] 침수_0단계_교차로 -> label=Normal is_normal=True
+[Training] 침수_0단계_대로 -> label=Normal is_normal=True
+[Training] 침수_1단계_골목길 -> label=Flood is_normal=False
+[Training] 침수_1단계_교차로 -> label=Flood is_normal=False
+[Training] 침수_1단계_기타 -> label=Flood is_normal=False
+[Training] 침수_1단계_대로 -> label=Flood is_normal=False
+[Training] 침수_2단계_골목길 -> label=Flood is_normal=False
+[Training] 침입 -> label=Invasion is_normal=False
+[Validation] 군집 -> label=Gathering is_normal=False
+[Validation] 싸움 -> label=Fight is_normal=False
+[Validation] 쓰러짐 -> label=Falldown is_normal=False
+[Validation] 인파밀집_할로윈데이 1주전_금 -> label=Normal is_normal=True
+    [warn] decoded 1793 frames, json declared 1822
+[Validation] 인파밀집_할로윈데이 1주전_토 -> label=Normal is_normal=True
+[Validation] 인파밀집_할로윈데이 포함_금 -> label=Crowd is_normal=False
+    [warn] decoded 1824 frames, json declared 1853
+[Validation] 인파밀집_할로윈데이 포함_목 -> label=Crowd is_normal=False
+    [warn] decoded 1777 frames, json declared 1806
+[Validation] 침수_0단계_대로 -> label=Normal is_normal=True
+[Validation] 침수_1단계_골목길 -> label=Flood is_normal=False
+[Validation] 침수_1단계_교차로 -> label=Flood is_normal=False
+[Validation] 침수_1단계_기타 -> label=Flood is_normal=False
+[Validation] 침수_1단계_대로 -> label=Flood is_normal=False
+[Validation] 침수_2단계_골목길 -> label=Flood is_normal=False
+[Validation] 침입 -> label=Invasion is_normal=False
+building lists from 269 manifest entries
+  wrote /home/cvlab/Fed-WAVAD-main/data/list/cctv_train.csv (238 rows)
+  wrote /home/cvlab/Fed-WAVAD-main/data/list/cctv_test.csv (31 rows)
+  wrote /home/cvlab/Fed-WAVAD-main/data/list/cctv_event/cctv_Fight.csv (42 rows)
+  wrote /home/cvlab/Fed-WAVAD-main/data/list/cctv_event/cctv_Flood.csv (57 rows)
+  wrote /home/cvlab/Fed-WAVAD-main/data/list/cctv_event/cctv_Crowd.csv (39 rows)
+  wrote /home/cvlab/Fed-WAVAD-main/data/list/cctv_event/cctv_Invasion.csv (63 rows)
+  wrote /home/cvlab/Fed-WAVAD-main/data/list/cctv_event/cctv_Gathering.csv (74 rows)
+  wrote /home/cvlab/Fed-WAVAD-main/data/list/cctv_event/cctv_Falldown.csv (53 rows)
+  wrote /home/cvlab/Fed-WAVAD-main/data/gt_cctv.npy (163872 frames, 91876 anomalous)
+label counts: {('Training', 'Gathering'): 56, ('Training', 'Fight'): 24, ('Training', 'Falldown'): 35, ('Training', 'Normal'): 18, ('Training', 'Crowd'): 21, ('Training', 'Flood'): 39, ('Training', 'Invasion'): 45, ('Validation', 'Gathering'): 7, ('Validation', 'Fight'): 3, ('Validation', 'Falldown'): 5, ('Validation', 'Normal'): 3, ('Validation', 'Crowd'): 2, ('Validation', 'Flood'): 6, ('Validation', 'Invasion'): 5}

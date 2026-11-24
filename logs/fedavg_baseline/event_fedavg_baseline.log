@@ -1,0 +1,242 @@
+fatal: not a git repository (or any parent up to mount point /media/cvlab3ad)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+-------- round: 1 / 15 --------
+round 1, client: 1
+round 1, client: 2
+round 1, client: 3
+round 1, client: 4
+round 1, client: 5
+round 1, client: 6
+round 1, client: 7
+round 1, client: 8
+round 1, client: 9
+round 1, client: 10
+round 1, client: 11
+round 1, client: 12
+round 1, client: 13
+round 1 : roc: 0.7995983094103202 , ap: 0.19183013866454413
+best: 0.7995983094103202
+-------- round: 2 / 15 --------
+round 2, client: 1
+round 2, client: 2
+round 2, client: 3
+round 2, client: 4
+round 2, client: 5
+round 2, client: 6
+round 2, client: 7
+round 2, client: 8
+round 2, client: 9
+round 2, client: 10
+round 2, client: 11
+round 2, client: 12
+round 2, client: 13
+round 2 : roc: 0.8344130325257925 , ap: 0.2200161802285651
+best: 0.8344130325257925
+-------- round: 3 / 15 --------
+round 3, client: 1
+round 3, client: 2
+round 3, client: 3
+round 3, client: 4
+round 3, client: 5
+round 3, client: 6
+round 3, client: 7
+round 3, client: 8
+round 3, client: 9
+round 3, client: 10
+round 3, client: 11
+round 3, client: 12
+round 3, client: 13
+round 3 : roc: 0.8354345856533154 , ap: 0.22335352338182646
+best: 0.8354345856533154
+-------- round: 4 / 15 --------
+round 4, client: 1
+round 4, client: 2
+round 4, client: 3
+round 4, client: 4
+round 4, client: 5
+round 4, client: 6
+round 4, client: 7
+round 4, client: 8
+round 4, client: 9
+round 4, client: 10
+round 4, client: 11
+round 4, client: 12
+round 4, client: 13
+round 4 : roc: 0.8397452181083561 , ap: 0.22822850535607508
+best: 0.8397452181083561
+-------- round: 5 / 15 --------
+round 5, client: 1
+round 5, client: 2
+round 5, client: 3
+round 5, client: 4
+round 5, client: 5
+round 5, client: 6
+round 5, client: 7
+round 5, client: 8
+round 5, client: 9
+round 5, client: 10
+round 5, client: 11
+round 5, client: 12
+round 5, client: 13
+round 5 : roc: 0.8431828807675664 , ap: 0.2348935521574374
+best: 0.8431828807675664
+-------- round: 6 / 15 --------
+round 6, client: 1
+round 6, client: 2
+round 6, client: 3
+round 6, client: 4
+round 6, client: 5
+round 6, client: 6
+round 6, client: 7
+round 6, client: 8
+round 6, client: 9
+round 6, client: 10
+round 6, client: 11
+round 6, client: 12
+round 6, client: 13
+round 6 : roc: 0.842288614866524 , ap: 0.23634760985942332
+best: 0.8431828807675664
+-------- round: 7 / 15 --------
+round 7, client: 1
+round 7, client: 2
+round 7, client: 3
+round 7, client: 4
+round 7, client: 5
+round 7, client: 6
+round 7, client: 7
+round 7, client: 8
+round 7, client: 9
+round 7, client: 10
+round 7, client: 11
+round 7, client: 12
+round 7, client: 13
+round 7 : roc: 0.8462062811298886 , ap: 0.24100240075606566
+best: 0.8462062811298886
+-------- round: 8 / 15 --------
+round 8, client: 1
+round 8, client: 2
+round 8, client: 3
+round 8, client: 4
+round 8, client: 5
+round 8, client: 6
+round 8, client: 7
+round 8, client: 8
+round 8, client: 9
+round 8, client: 10
+round 8, client: 11
+round 8, client: 12
+round 8, client: 13
+round 8 : roc: 0.8442080703737882 , ap: 0.24047944987861172
+best: 0.8462062811298886
+-------- round: 9 / 15 --------
+round 9, client: 1
+round 9, client: 2
+round 9, client: 3
+round 9, client: 4
+round 9, client: 5
+round 9, client: 6
+round 9, client: 7
+round 9, client: 8
+round 9, client: 9
+round 9, client: 10
+round 9, client: 11
+round 9, client: 12
+round 9, client: 13
+round 9 : roc: 0.8468274146744941 , ap: 0.24551531191279588
+best: 0.8468274146744941
+-------- round: 10 / 15 --------
+round 10, client: 1
+round 10, client: 2
+round 10, client: 3
+round 10, client: 4
+round 10, client: 5
+round 10, client: 6
+round 10, client: 7
+round 10, client: 8
+round 10, client: 9
+round 10, client: 10
+round 10, client: 11
+round 10, client: 12
+round 10, client: 13
+round 10 : roc: 0.844707374190144 , ap: 0.2436192800074661
+best: 0.8468274146744941
+-------- round: 11 / 15 --------
+round 11, client: 1
+round 11, client: 2
+round 11, client: 3
+round 11, client: 4
+round 11, client: 5
+round 11, client: 6
+round 11, client: 7
+round 11, client: 8
+round 11, client: 9
+round 11, client: 10
+round 11, client: 11
+round 11, client: 12
+round 11, client: 13
+round 11 : roc: 0.8469121575096896 , ap: 0.24846666473529144
+best: 0.8469121575096896
+-------- round: 12 / 15 --------
+round 12, client: 1
+round 12, client: 2
+round 12, client: 3
+round 12, client: 4
+round 12, client: 5
+round 12, client: 6
+round 12, client: 7
+round 12, client: 8
+round 12, client: 9
+round 12, client: 10
+round 12, client: 11
+round 12, client: 12
+round 12, client: 13
+round 12 : roc: 0.8472915455680955 , ap: 0.24710025160746668
+best: 0.8472915455680955
+-------- round: 13 / 15 --------
+round 13, client: 1
+round 13, client: 2
+round 13, client: 3
+round 13, client: 4
+round 13, client: 5
+round 13, client: 6
+round 13, client: 7
+round 13, client: 8
+round 13, client: 9
+round 13, client: 10
+round 13, client: 11
+round 13, client: 12
+round 13, client: 13
+round 13 : roc: 0.8482852625817864 , ap: 0.2488583146086496
+best: 0.8482852625817864
+-------- round: 14 / 15 --------
+round 14, client: 1
+round 14, client: 2
+round 14, client: 3
+round 14, client: 4
+round 14, client: 5
+round 14, client: 6
+round 14, client: 7
+round 14, client: 8
+round 14, client: 9
+round 14, client: 10
+round 14, client: 11
+round 14, client: 12
+round 14, client: 13
+round 14 : roc: 0.8482144714437151 , ap: 0.24969488251175953
+best: 0.8482852625817864
+-------- round: 15 / 15 --------
+round 15, client: 1
+round 15, client: 2
+round 15, client: 3
+round 15, client: 4
+round 15, client: 5
+round 15, client: 6
+round 15, client: 7
+round 15, client: 8
+round 15, client: 9
+round 15, client: 10
+round 15, client: 11
+round 15, client: 12
+round 15, client: 13
+round 15 : roc: 0.8471740837845583 , ap: 0.24975384835941716
+best: 0.8482852625817864

@@ -1,0 +1,43 @@
+% Date kind: report-date (consolidated); report date: 2026-10-08.
+% Baseline experiment date: unknown; user reported completion in conversation.
+% PEL experiment end: 2026-10-07T19:54:53+09:00; exit code 0.
+% Source: user-pasted terminal results in this conversation; full Linux logs,
+% run directory, manifests and checkpoint files have not been inspected locally.
+% Local analysis commit: 2981bbf9aee30a7b8cf85b85c1afed954f285917.
+% Linux execution commit: unknown (not independently verified).
+% Dataset: UCF-Crime; event split; 13 clients; global frame-level evaluation.
+% CLIP features: expected 512-dimensional; actual feature manifest uninspected.
+% FedAvg; server_optimizer none; personalization none; local_param_policy none.
+% Weight unit: sum of normal/anomaly DataLoader batch counts (existing code).
+% 20 rounds x 10 local epochs; batch size 64 per normal/anomaly loader;
+% concatenated local batch up to 128; AdamW; LR 0.0001.
+% Single seed: 88888888; no mean/std or significance claim.
+% Baseline: MIL-based classification loss only. Candidate: MIL-based classification loss + 1.0 * fixed_bank PEL; temperature .09.
+% Fixed bank: 14 class-word embeddings; no expanded knowledge-prompt JSON.
+% Environment reported by user: RTX 3090 Ti; Python 3.11; torch 2.5.1+cu121.
+% Selection: highest test ROC-AUC across rounds; final = round 20.
+% AP at selected best-AUC checkpoint, best round and independent best AP: unknown.
+% Baseline raw: best AUC .8527366579931893; final AUC .8523379086512399;
+% final AP .2665676698745457; runtime unknown.
+% PEL raw: best AUC .861960712247761; final AUC .8399802397232;
+% final AP .25301745355987004; real 93m53.312s (5633.312 s).
+% Delta in percentage points: best AUC +.92240542545717;
+% final AUC -1.23576689280399; final AP -1.35502163146757.
+% Requires booktabs, amsmath, graphicx, caption in the paper preamble.
+\begin{table*}[t]
+  \centering
+  \caption{UCF-Crime event-split comparison with 13 FedAvg clients, 20 rounds, 10 local epochs per round, and seed 88888888. Metrics are percentages; higher is better. Best AUC is selected on the test set; final metrics are from round 20. AP at the best-AUC checkpoint was not reported (--). PEL elapsed time: 93 min 53.312 s. Single-seed results.}
+  \label{tab:ucf-event-fixed-bank-pel-seed88888888}
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Method & Best AUC ($\uparrow$) & Selected AP & Final AUC ($\uparrow$) & Final AP ($\uparrow$) \\
+    \midrule
+    Fed-WSVAD baseline & 85.27 & -- & \textbf{85.23} & \textbf{26.66} \\
+    + Fixed-bank PEL & \textbf{86.20} & -- & 84.00 & 25.30 \\
+    \midrule
+    Difference (percentage points) & +0.92 & -- & $-1.24$ & $-1.36$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}

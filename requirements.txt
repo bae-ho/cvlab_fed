@@ -1,0 +1,12 @@
+numpy
+datetime
+pandas
+torchviz
+pillow
+tqdm
+ftfy
+regex
+scipy
+einops
+scikit-learn
+opencv-python
