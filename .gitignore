@@ -6,3 +6,5 @@ data/
 *.pth
 artifacts/localization_*/
 artifacts/jetson_demo/
+yolov8n.pt
+yolov8n.pt

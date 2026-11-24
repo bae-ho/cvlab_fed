@@ -164,13 +164,10 @@ def find_video_file(video_dir, name):
 
 
 def render_overlay(video_path, out_path, frame_scores, gt_frames, frame_classes, threshold,
-                   heatmapper=None, heat_stride=4, peak_png=None):
+                   frame_hook=None):
     """원본 영상 하단에 점수 그래프 strip, 상단에 판정 배너를 그린다.
-    heatmapper가 있으면 이상 판정 프레임에 CLIP 패치 히트맵을 겹치고,
-    peak_png 경로에 점수가 가장 높은 프레임의 [원본 | 히트맵] 이미지를 저장한다."""
+    frame_hook(i, frame, anomalous) 가 있으면 배너를 그리기 전에 프레임을 바꿀 수 있다 (Grad-CAM 등)."""
     import cv2
-    if heatmapper is not None:
-        from scripts.clip_patch_heatmap import blend_heatmap
 
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -196,8 +193,6 @@ def render_overlay(video_path, out_path, frame_scores, gt_frames, frame_classes,
     font = max(0.35, min(0.8, w / 640))  # UCF-Crime(320x240) 같은 작은 영상에서도 글자가 잘리지 않게
     thick = 1 if font < 0.6 else 2
     bar_h = int(30 * font / 0.7) + 4
-    peak_k = int(np.argmax(frame_scores))
-    heat, heat_age = None, heat_stride
     i = 0
     while True:
         ok, frame = cap.read()
@@ -206,16 +201,8 @@ def render_overlay(video_path, out_path, frame_scores, gt_frames, frame_classes,
         k = min(i, n - 1)
         score = float(frame_scores[k])
         anomalous = score >= threshold
-        if heatmapper is not None and (anomalous or i == peak_k):
-            if heat is None or heat_age >= heat_stride:
-                heat, heat_age = heatmapper([frame], [frame_classes[k]])[0], 0
-            heat_age += 1
-            if i == peak_k and peak_png:
-                cv2.imwrite(peak_png, np.hstack([frame, blend_heatmap(frame, heat)]))
-            if anomalous:
-                frame = blend_heatmap(frame, heat)
-        else:
-            heat = None
+        if frame_hook is not None:
+            frame = frame_hook(i, frame, anomalous)
         color = (40, 40, 220) if anomalous else (60, 160, 60)
         text = f'ANOMALY: {frame_classes[k]}  {score:.2f}' if anomalous else f'normal  {score:.2f}'
         cv2.rectangle(frame, (0, 0), (w, bar_h), color, -1)
@@ -229,6 +216,49 @@ def render_overlay(video_path, out_path, frame_scores, gt_frames, frame_classes,
     cap.release()
     writer.release()
     return True
+
+
+def make_cam_hook(cam, video_path, rec, disp_scores, threshold, name, args, cam_rows, peak_png):
+    """Grad-CAM 준비: 저장 특징과 맞도록 보정하고, 피크 이미지를 저장한 뒤 영상용 hook을 돌려준다."""
+    import cv2
+    from scripts.gradcam import blend_cam, read_frames
+
+    visual, length = rec['visual'], rec['length']
+    stored = (visual.reshape(-1, visual.shape[-1]) if visual.dim() == 3 else visual)[:length].float().numpy()
+    top = [int(t) for t in np.argsort(-rec['score'])[:3]]
+    cos = cam.calibrate(video_path, stored, top)
+    print(f'  Grad-CAM 보정: 자르기={cam.crop[0]}, 오프셋={cam.offset}, 저장 특징과 코사인 유사도 {cos:.3f}'
+          + ('  [주의] 0.9 미만이면 저장 특징과 전처리가 달라 설명이 부정확할 수 있음' if cos is not None and cos < 0.9 else ''))
+
+    def run(t, frame):
+        heat, live, c = cam.explain(frame, visual, length, t)
+        cam_rows.append({'video': name, 'snippet': t, 'frame': cam.frame_index(t),
+                         'sec': round(cam.frame_index(t) / args.fps, 2),
+                         'score_stored': round(float(rec['score'][t]), 4), 'score_live': round(live, 4),
+                         'feature_cos': round(c, 4)})
+        return heat
+
+    t_peak = int(np.argmax(disp_scores))
+    f = read_frames(video_path, [cam.frame_index(t_peak)]).get(cam.frame_index(t_peak))
+    if f is not None:
+        heat = run(t_peak, f)
+        cv2.imwrite(peak_png, np.hstack([f, blend_cam(f, heat)]))
+        print(f'  Grad-CAM 피크 저장: {peak_png} (스니펫 {t_peak}, 프레임 {cam.frame_index(t_peak)})')
+    if args.cam_peak_only:
+        return None
+
+    state = {'heat': None, 'last_t': -10 ** 9}
+
+    def hook(i, frame, anomalous):
+        t = i // 16
+        if not anomalous or t >= len(disp_scores):
+            state['heat'] = None
+            return frame
+        if i == cam.frame_index(t) and (state['heat'] is None or t - state['last_t'] >= args.cam_every):
+            state['heat'], state['last_t'] = run(t, frame), t
+        return blend_cam(frame, state['heat']) if state['heat'] is not None else frame
+
+    return hook
 
 
 # ----------------------------------------------------------------------------
@@ -318,9 +348,12 @@ def build_parser():
     g.add_argument('--only_anomaly', action='store_true', help='정답이 Normal인 영상은 건너뜀')
     g.add_argument('--max_videos', type=int, default=None)
     g.add_argument('--video_dir', default=None, help='원본 영상 폴더. 주면 오버레이 mp4 생성')
-    g.add_argument('--heatmap', action='store_true',
-                   help='오버레이 영상의 이상 프레임에 CLIP 패치 히트맵(보조 시각화)을 겹침. --video_dir 필요')
-    g.add_argument('--heatmap_stride', type=int, default=4, help='히트맵을 몇 프레임마다 새로 계산할지')
+    g.add_argument('--gradcam', action='store_true',
+                   help='이상 판정 구간에 모델 Grad-CAM(이상 점수를 올린 화면 영역)을 겹침. --video_dir 필요')
+    g.add_argument('--cam_every', type=int, default=1,
+                   help='몇 스니펫(16프레임)마다 Grad-CAM을 새로 계산할지 (젯슨 등 느린 기기는 4~8)')
+    g.add_argument('--cam_peak_only', action='store_true',
+                   help='영상 전체 대신 점수가 가장 높은 순간 1장만 계산 (젯슨 권장)')
     g.add_argument('--fps', type=float, default=30.0, help='segments.csv의 초 단위 환산용 fps')
     return p
 
@@ -359,13 +392,13 @@ def main():
     os.makedirs(plot_dir, exist_ok=True)
     if args.video_dir:
         os.makedirs(vid_dir, exist_ok=True)
-    heatmapper = None
-    if args.heatmap:
+    cam, cam_rows = None, []
+    if args.gradcam:
         if not args.video_dir:
-            raise SystemExit('--heatmap 은 원본 영상이 필요합니다: --video_dir 를 함께 지정하세요')
-        from scripts.clip_patch_heatmap import ClipPatchHeatmap
-        heatmapper = ClipPatchHeatmap(model.clipmodel, prompt_text, device)
-        os.makedirs(os.path.join(args.out_dir, 'heatmaps'), exist_ok=True)
+            raise SystemExit('--gradcam 은 원본 영상이 필요합니다: --video_dir 를 함께 지정하세요')
+        from scripts.gradcam import ModelGradCAM
+        cam = ModelGradCAM(model, prompt_text, device, use_personalization, args.visual_length)
+        os.makedirs(os.path.join(args.out_dir, 'gradcam'), exist_ok=True)
 
     # 1) 전체 테스트셋 추론 (점수만 모아둠)
     records, offset = [], 0
@@ -378,7 +411,7 @@ def main():
             offset += n_frames
             label = label[0] if isinstance(label, (list, tuple)) else str(label)
             records.append({'name': video_name_from_path(df.loc[i, 'path']), 'label': label,
-                            'score': score, 'probs': probs, 'gt': gt_frames})
+                            'score': score, 'probs': probs, 'gt': gt_frames, 'idx': i})
             if (i + 1) % 50 == 0:
                 print(f'  추론 {i + 1}/{len(test_loader)}')
 
@@ -469,11 +502,15 @@ def main():
             if vpath is None:
                 print(f'  [skip] 원본 영상 없음: {name}')
             else:
-                render_overlay(vpath, os.path.join(vid_dir, f'{name}_demo.mp4'),
-                               frame_scores, gt_frames, frame_classes, threshold,
-                               heatmapper=heatmapper, heat_stride=args.heatmap_stride,
-                               peak_png=os.path.join(args.out_dir, 'heatmaps', f'{name}_peak.png')
-                               if heatmapper is not None else None)
+                hook = None
+                if cam is not None:
+                    feat, _, ln = test_dataset[r['idx']]   # 저장 특징 (Grad-CAM에서 나머지 스니펫으로 사용)
+                    r['visual'], r['length'] = feat, int(ln)
+                    hook = make_cam_hook(cam, vpath, r, s, threshold, name, args, cam_rows,
+                                         os.path.join(args.out_dir, 'gradcam', f'{name}_peak.png'))
+                if not (cam is not None and args.cam_peak_only):
+                    render_overlay(vpath, os.path.join(vid_dir, f'{name}_demo.mp4'),
+                                   frame_scores, gt_frames, frame_classes, threshold, frame_hook=hook)
         print(f'[{shown}] {name}: GT={label} pred={video_cls} segments={len(segs)} max={s.max():.3f}'
               + ('' if iou is None else f' IoU={iou:.3f}') + ('' if vid_auc is None else f' AUC={vid_auc:.3f}'))
 
@@ -499,6 +536,8 @@ def main():
     write_csv(os.path.join(args.out_dir, 'per_video.csv'), video_rows,
               ['video', 'gt_label', 'pred_class', 'num_segments', 'frame_iou', 'video_auc', 'max_score',
                'mean_score_in_gt'])
+    if cam_rows:
+        write_csv(os.path.join(args.out_dir, 'gradcam.csv'), cam_rows, list(cam_rows[0].keys()))
     with open(os.path.join(args.out_dir, 'summary.json'), 'w', encoding='utf-8') as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
 
