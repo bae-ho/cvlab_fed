@@ -214,13 +214,105 @@ class LiveScorer:
 
 
 # ----------------------------------------------------------------------------
+# 웹 스트리밍 (PC 브라우저에서 http://젯슨IP:포트 로 보기)
+# ----------------------------------------------------------------------------
+class MjpegStreamer:
+    """가장 최근 화면을 JPEG로 보관하고, 접속한 브라우저에 MJPEG(multipart)로 계속 보낸다."""
+
+    def __init__(self, port, fps=10, quality=70):
+        import http.server
+        import socketserver
+        self.jpg, self.cond = None, threading.Condition()
+        self.min_dt, self.quality, self.last = 1.0 / fps, quality, 0.0
+        streamer = self
+
+        class Handler(http.server.BaseHTTPRequestHandler):
+            def log_message(self, *a):
+                pass
+
+            def do_GET(self):
+                if self.path not in ('/', '/stream'):
+                    self.send_error(404)
+                    return
+                if self.path == '/':
+                    body = (b'<html><body style="margin:0;background:#111">'
+                            b'<img src="/stream" style="width:100%;max-width:1280px;display:block;margin:auto">'
+                            b'</body></html>')
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'text/html')
+                    self.send_header('Content-Length', str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+                    return
+                self.send_response(200)
+                self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
+                self.end_headers()
+                try:
+                    while True:
+                        with streamer.cond:
+                            streamer.cond.wait(timeout=2)
+                            jpg = streamer.jpg
+                        if jpg is None:
+                            continue
+                        self.wfile.write(b'--frame\r\nContent-Type: image/jpeg\r\nContent-Length: '
+                                         + str(len(jpg)).encode() + b'\r\n\r\n' + jpg + b'\r\n')
+                except (BrokenPipeError, ConnectionResetError):
+                    pass
+
+        class Server(socketserver.ThreadingMixIn, http.server.HTTPServer):
+            daemon_threads = True
+            allow_reuse_address = True
+
+        self.server = Server(('0.0.0.0', port), Handler)
+        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+
+    def push(self, img):
+        import cv2
+        now = time.time()
+        if now - self.last < self.min_dt:   # 전송 프레임 수 제한 (젯슨 CPU 절약)
+            return
+        self.last = now
+        ok, buf = cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, self.quality])
+        if ok:
+            with self.cond:
+                self.jpg = buf.tobytes()
+                self.cond.notify_all()
+
+    def close(self):
+        self.server.shutdown()
+
+
+def local_ip():
+    import socket
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except OSError:
+        return '젯슨IP'
+
+
+def draw_guide(img):
+    """미리보기용: 모델이 실제로 보는 가운데 정사각형 영역(256 축소 후 224 crop) 표시."""
+    import cv2
+    h, w = img.shape[:2]
+    side = int(min(h, w) * 224 / 256)
+    x0, y0 = (w - side) // 2, (h - side) // 2
+    cv2.rectangle(img, (x0, y0), (x0 + side, y0 + side), (0, 255, 255), 2)
+    cv2.putText(img, 'model view', (x0 + 6, y0 + 22), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+    return img
+
+
+# ----------------------------------------------------------------------------
 # 화면 구성
 # ----------------------------------------------------------------------------
 def compose(frame, st, threshold, disp_w, hist_len=120):
     import cv2
     h, w = frame.shape[:2]
     disp_h = int(h * disp_w / w)
-    img = cv2.resize(frame, (disp_w, disp_h))
+    img = draw_guide(cv2.resize(frame, (disp_w, disp_h)))
     score, ema, cls = st.get('score'), st.get('ema'), st.get('cls', '')
     anomalous = ema is not None and ema >= threshold
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -282,8 +374,41 @@ def build_parser():
     g.add_argument('--threads', type=int, default=max(1, (os.cpu_count() or 2) - 1),
                    help='torch 계산 스레드 수. 화면·카메라용으로 코어 1개를 남겨야 함 (전부 쓰면 크게 느려짐)')
     g.add_argument('--max_seconds', type=float, default=None)
+    g.add_argument('--stream', type=int, default=None, metavar='PORT',
+                   help='화면을 웹으로 송출 (예: --stream 8080 → PC 브라우저에서 http://젯슨IP:8080)')
+    g.add_argument('--stream_fps', type=int, default=10, help='웹 송출 프레임 수 (CPU 절약)')
+    g.add_argument('--preview_only', action='store_true',
+                   help='모델 없이 카메라 화면만 보기 (카메라 위치·크기 맞추기용, --stream 과 함께)')
     g.add_argument('--no_fast_text', action='store_true', help='텍스트 인코더 EOT 절단 최적화 끄기 (비교용)')
     return p
+
+
+def run_preview(args, streamer):
+    """모델 없이 카메라 화면 + 모델이 보는 영역 표시. Ctrl+C(또는 창에서 q)로 종료."""
+    import cv2
+    src = open_source(args)
+    print('미리보기 중 (Ctrl+C로 종료). 노란 사각형 = 모델이 실제로 보는 영역')
+    t0 = time.time()
+    try:
+        while True:
+            ok, frame = src.read()
+            if not ok:
+                break
+            view = draw_guide(cv2.resize(frame, (args.display_width, int(frame.shape[0] * args.display_width / frame.shape[1]))))
+            if streamer is not None:
+                streamer.push(view)
+            if not args.no_window:
+                cv2.imshow('preview (q: quit)', view)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            if args.max_seconds and time.time() - t0 > args.max_seconds:
+                break
+    except KeyboardInterrupt:
+        pass
+    finally:
+        src.release()
+        if streamer is not None:
+            streamer.close()
 
 
 def main():
@@ -295,6 +420,13 @@ def main():
     from utils.tools import get_prompt_text
 
     args = build_parser().parse_args()
+    streamer = None
+    if args.stream:
+        streamer = MjpegStreamer(args.stream, args.stream_fps)
+        print(f'웹 송출 중: PC 브라우저에서 http://{local_ip()}:{args.stream} 접속')
+    if args.preview_only:
+        run_preview(args, streamer)
+        return
     if args.checkpoint is None:
         raise SystemExit('--checkpoint 를 지정하세요')
     torch.set_num_threads(args.threads)
@@ -386,6 +518,8 @@ def main():
                     writer = cv2.VideoWriter(args.save, cv2.VideoWriter_fourcc(*'mp4v'),
                                              getattr(src, 'fps', 30) or 30, (view.shape[1], view.shape[0]))
                 writer.write(view)
+            if streamer is not None:
+                streamer.push(view)
             if not args.no_window:
                 cv2.imshow(win, view)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -402,6 +536,8 @@ def main():
         # 'terminate called without an active exception' 으로 비정상 종료됨)
         th.join(timeout=180)
         src.release()
+        if streamer is not None:
+            streamer.close()
         if writer is not None:
             writer.release()
         if not args.no_window:
