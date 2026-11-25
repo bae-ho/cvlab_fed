@@ -398,6 +398,9 @@ def main():
             jobs.put((None, None))
             th.join()
         stop.set()
+        # 계산 중이던 판정이 끝날 때까지 기다린 뒤 종료 (안 기다리면 torch 스레드가 남아
+        # 'terminate called without an active exception' 으로 비정상 종료됨)
+        th.join(timeout=180)
         src.release()
         if writer is not None:
             writer.release()
